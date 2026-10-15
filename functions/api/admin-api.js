@@ -1,6 +1,7 @@
+import { TEMPLATES, getCfg, tpl, provider, sendTemplate, sendBatch, unsubUrl, orderVars, notifyHooks } from "../_lib/email.js";
 import { getLog, runIndexing, submitGoogle, changedUrls } from "../_lib/indexing.js";
 import { json, getSession, sameOrigin, ghList, ghGet, ghPut, ghDelete, googleToken, has, repo, siteUrl, ghHeaders, ghApi, branch, kvGet, kvPut, kvDel } from "../_lib/admin.js";
-const SECRETS = ["ADMIN_USERNAME", "ADMIN_PASSWORD_SHA256", "SESSION_SECRET", "GITHUB_TOKEN", "INDEXNOW_HOOK_SECRET", "GSC_SERVICE_ACCOUNT_JSON", "MERCHANT_SERVICE_ACCOUNT_JSON", "GOOGLE_INDEXING_SA_JSON"];
+const SECRETS = ["ADMIN_USERNAME", "ADMIN_PASSWORD_SHA256", "SESSION_SECRET", "GITHUB_TOKEN", "INDEXNOW_HOOK_SECRET", "GSC_SERVICE_ACCOUNT_JSON", "MERCHANT_SERVICE_ACCOUNT_JSON", "GOOGLE_INDEXING_SA_JSON", "RESEND_API_KEY", "BREVO_API_KEY", "EMAIL_FROM", "ADMIN_NOTIFY_EMAIL", "CRON_SECRET", "SMS_WEBHOOK_URL", "WHATSAPP_WEBHOOK_URL"];
 const STATUSES = ["new", "confirmed", "shipped", "delivered", "cancelled"];
 const q = (s) => JSON.stringify(String(s ?? ""));
 const SLUG = /^[a-z0-9][a-z0-9-]{1,80}$/, OID = /^ENV-\d{6}-[0-9A-F]{6}$/;
@@ -81,10 +82,37 @@ export async function onRequest({ request: req, env }) {
     if (a === "orders") return json({ kv: Boolean(env.STORE), items: await listOrders(env) });
     if (a === "order-status") { const id = String(body.id || ""); if (!OID.test(id) || !STATUSES.includes(body.status)) return json({ error: "Bad id or status" }, 400);
       const o = await kvGet(env, `order:${id}`); if (!o) return json({ error: "Order not found" }, 404);
-      o.status = body.status; o.history = [...(o.history || []), { at: new Date().toISOString(), status: body.status }]; if (typeof body.admin_note === "string") o.admin_note = body.admin_note.slice(0, 500);
-      await kvPut(env, `order:${id}`, o); return json({ ok: true, order: o }); }
+      const changed = o.status !== body.status; o.status = body.status;
+      if (typeof body.admin_note === "string") o.admin_note = body.admin_note.slice(0, 500);
+      if (typeof body.courier === "string") o.courier = body.courier.slice(0, 80);
+      if (typeof body.tracking === "string") o.tracking = body.tracking.slice(0, 80);
+      if (changed) { o.history = [...(o.history || []), { at: new Date().toISOString(), status: body.status }]; if (body.status === "delivered") o.delivered_at = new Date().toISOString(); }
+      await kvPut(env, `order:${id}`, o);
+      let email = null;
+      if (changed && body.notify !== false && body.status !== "new") { email = o.email ? await sendTemplate(env, req, `status_${body.status}`, o.email, orderVars(o, SITE)) : { skipped: "no customer email" }; await notifyHooks(env, `order.${body.status}`, { order: o }); }
+      return json({ ok: true, order: o, email }); }
+    // ---- emails
+    if (a === "email-config") { const cfg = await getCfg(env); return json({ provider: provider(env), from: env.EMAIL_FROM || "", admin: env.ADMIN_NOTIFY_EMAIL || "", cfg, templates: Object.fromEntries(Object.keys(TEMPLATES).map((k) => [k, tpl(cfg, k)])), defaults: TEMPLATES }); }
+    if (a === "save-email-config") { const c = body.cfg || {}, cfg = await getCfg(env);
+      const t = {}; for (const k of Object.keys(TEMPLATES)) { const x = (c.templates || {})[k]; if (x) t[k] = { enabled: Boolean(x.enabled), subject: String(x.subject || TEMPLATES[k].subject).slice(0, 300), body: String(x.body || TEMPLATES[k].body).slice(0, 10000) }; }
+      const n = { ...cfg, review_days: Math.max(1, Math.min(60, Number(c.review_days) || 4)), abandoned_hours: Math.max(1, Math.min(72, Number(c.abandoned_hours) || 2)), sms_enabled: Boolean(c.sms_enabled), whatsapp_enabled: Boolean(c.whatsapp_enabled), templates: t };
+      await kvPut(env, "email:config", n); return json({ ok: true }); }
+    if (a === "email-log") return json({ items: await kvGet(env, "email:log", []) });
+    if (a === "email-test") { const to = String(body.to || env.ADMIN_NOTIFY_EMAIL || ""); const key = TEMPLATES[body.template] ? body.template : "order_customer";
+      const sample = orderVars({ id: "ENV-000000-TEST00", name: "Test Customer", phone: "03001234567", email: to, city: "Lahore", address: "Sample address", qty: 1, product: "Envoquee Hair Regrowth Serum Kit", total: 5450, delivery: null, courier: "TCS", tracking: "123456" }, SITE);
+      return json(await sendTemplate(env, req, key, to, { ...sample, message: "Sample message", subject: "Sample broadcast", body: "Sample body" }, { force: true })); }
+    if (a === "subscribers") { const out = []; let cursor; do { const r = await env.STORE.list({ prefix: "sub:", cursor }); out.push(...r.keys.map((k) => k.name)); cursor = r.list_complete ? null : r.cursor; } while (cursor && out.length < 5000);
+      const items = (await Promise.all(out.slice(0, 900).map((k) => kvGet(env, k)))).filter(Boolean); return json({ items }); }
+    if (a === "delete-subscriber") { const e = String(body.email || "").toLowerCase(); await kvDel(env, `sub:${e}`); return json({ ok: true }); }
+    if (a === "broadcast") { const subject = String(body.subject || "").trim().slice(0, 200), text = String(body.body || "").trim();
+      if (!subject || text.length < 10) return json({ error: "Subject and message are required" }, 400);
+      const keys = []; let cursor; do { const r = await env.STORE.list({ prefix: "sub:", cursor }); keys.push(...r.keys.map((k) => k.name)); cursor = r.list_complete ? null : r.cursor; } while (cursor);
+      const subs = (await Promise.all(keys.slice(0, 900).map((k) => kvGet(env, k)))).filter((x) => x && !x.unsubscribed);
+      if (body.test) { const to = env.ADMIN_NOTIFY_EMAIL; if (!to) return json({ error: "Set ADMIN_NOTIFY_EMAIL to send a test" }, 400); return json(await sendBatch(env, req, [{ to, unsub: await unsubUrl(env, req, to) }], subject, text)); }
+      const list = []; for (const x of subs) list.push({ to: x.email, unsub: await unsubUrl(env, req, x.email) });
+      return json({ recipients: list.length, ...(await sendBatch(env, req, list, subject, text)) }); }
     if (a === "delete-order") { const id = String(body.id || ""); if (!OID.test(id)) return json({ error: "Bad id" }, 400); await kvDel(env, `order:${id}`); return json({ ok: true }); }
-    if (a === "orders-csv") { const items = await listOrders(env), cols = ["id", "at", "status", "name", "phone", "city", "address", "qty", "unit_price", "subtotal", "delivery", "total", "notes", "admin_note"];
+    if (a === "orders-csv") { const items = await listOrders(env), cols = ["id", "at", "status", "name", "phone", "city", "address", "qty", "unit_price", "subtotal", "delivery", "total", "notes", "courier", "tracking", "admin_note"];
       const csv = "\ufeff" + [cols.join(","), ...items.map((o) => cols.map((c) => csvCell(o[c])).join(","))].join("\r\n");
       return new Response(csv, { headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": `attachment; filename="envoquee-orders-${new Date().toISOString().slice(0, 10)}.csv"`, "cache-control": "no-store" } }); }
     return json({ error: "Unknown action" }, 400);

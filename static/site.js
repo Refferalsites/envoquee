@@ -14,8 +14,12 @@ $$(".cod-form").forEach(function(f){
   if(/^\d+$/.test(dc)){var del=(/^\d+$/.test(free)&&sub>=+free)?0:+dc;t.textContent=rs(sub+del);nt.textContent=del?("Includes delivery "+rs(del)):"Free delivery"}
   else{t.textContent=rs(sub);nt.textContent="Delivery charges, if any, are confirmed on your order call."}}
  f.quantity.onchange=upd;upd();
+ var sent="";function draft(){var em=f.email.value.trim(),c=f.remind.checked;if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return;var k=em+"|"+c;if(k===sent)return;sent=k;
+  fetch("/api/order-draft",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email:em,consent:c,name:f.name.value,city:f.city.value})}).catch(function(){})}
+ f.email.addEventListener("blur",function(){if(f.remind.checked)draft()});f.remind.addEventListener("change",draft);
  f.addEventListener("submit",function(e){e.preventDefault();var er=$(".err",f);er.hidden=true;
   var ph=f.phone.value.replace(/[\s\-().]/g,"");
+  var em=f.email.value.trim();if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){er.textContent="Please enter a valid email or leave it empty.";er.hidden=false;return}
   var msg=f.name.value.trim().length<2?"Please enter your full name.":!PH.test(ph)?"Please enter a valid Pakistani mobile number, e.g. 0300 1234567.":f.city.value.trim().length<2?"Please enter your city.":f.address.value.trim().length<8?"Please enter your full delivery address.":"";
   if(msg){er.textContent=msg;er.hidden=false;return}
   var btn=$("button[type=submit]",f);btn.disabled=true;btn.textContent="Placing your order…";
@@ -25,6 +29,9 @@ $$(".cod-form").forEach(function(f){
   .catch(function(x){er.textContent=x.message||"Network error, please try again.";er.hidden=false;btn.disabled=false;btn.textContent="Confirm Order – Pay Cash on Delivery"})})});
 // gallery
 var mi=$(".main-img img");$$(".th").forEach(function(t){t.onclick=function(){mi.removeAttribute("srcset");mi.src=t.dataset.src;mi.alt=t.dataset.alt;$$(".th").forEach(function(x){x.classList.toggle("on",x===t)})}});
+// unsubscribe
+var ub=$("#unsub-btn");if(ub){var qp=new URLSearchParams(location.search);ub.onclick=function(){fetch("/api/unsubscribe",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({e:qp.get("e"),t:qp.get("t")})}).then(function(r){return r.json()}).then(function(j){$("#unsub-msg").textContent=j.ok?"You have been unsubscribed. You won't receive newsletters from us again.":j.error;if(j.ok)ub.hidden=true})}}
+$$(".nlf input[name=page]").forEach(function(i){i.value=location.pathname});
 // thank-you
 var oid=$("#oid");if(oid){var id=new URLSearchParams(location.search).get("id")||"";if(/^ENV-\d{6}-[0-9A-F]{6}$/.test(id)){oid.textContent=id;$("#trk").href="/track-order/?id="+id}}
 // tracking

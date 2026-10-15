@@ -1,0 +1,12 @@
+name: Email cron
+# Review requests (N days after delivered) + consented abandoned-order reminders. Safe when no email provider is set (log only).
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - run: curl -fsS -X POST -H "x-cron-secret: ${{ secrets.INDEXNOW_HOOK_SECRET }}" https://envoquee.pages.dev/api/cron

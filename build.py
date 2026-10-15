@@ -131,6 +131,8 @@ def order_form(fid):
 <label>City<input name="city" list="pk-cities" autocomplete="address-level2" required maxlength="60"></label>
 <label>Quantity<select name="quantity">{qopts}</select></label></div>
 <label>Full address<textarea name="address" rows="2" autocomplete="street-address" required minlength="8" maxlength="400" placeholder="House / street, area, landmark"></textarea></label>
+<label>Email (optional, for order updates)<input name="email" type="email" autocomplete="email" maxlength="200" placeholder="you@example.com"></label>
+<label class="cbx"><input type="checkbox" name="remind" value="1"> Email me a one-time reminder if I don't finish this order (optional)</label>
 <label>Notes (optional)<input name="notes" maxlength="500" placeholder="Best time to call, etc."></label>
 <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label><input type="hidden" name="page" value="">
 <div class="total"><span>Total payable on delivery</span><b data-total>{rs(P['sale_price'])}</b><small data-dnote></small></div>
@@ -196,6 +198,7 @@ def page(path, title, desc, body, *, h1=None, crumb=None, og=None, schema=(), no
 <div class="fcol"><h2>Shop</h2><a href="{PRODUCT_URL}">Hair Serum Kit</a><a href="/the-kit/">What's in the Kit</a><a href="/ingredients/">Ingredients</a><a href="/how-to-use/">How to Use</a><a href="/derma-roller-safety/">Derma Roller Safety &amp; Care</a></div>
 <div class="fcol"><h2>Learn</h2><a href="/blog/">Blog</a>{"".join(f'<a href="{cat_url(c)}">{E(c)}</a>' for c in CATS)}<a href="/faq/">Questions &amp; Answers</a></div>
 <div class="fcol"><h2>Help</h2><a href="/track-order/">Track Your Order</a><a href="/shipping/">Shipping &amp; Delivery</a><a href="/returns/">Returns &amp; Refunds</a><a href="/contact/">Contact Us</a><a href="/about/">About {E(BRAND)}</a></div></div>
+<div class="nl"><div><h2>Scalp care tips, made for Pakistan</h2><p>New guides from our blog. No spam, unsubscribe anytime.</p></div><form action="/api/form" method="post" class="nlf"><input type="hidden" name="form-name" value="newsletter"><input type="hidden" name="page" value="{path}"><label class="hp" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off"></label><label class="sr">Email<input name="email" type="email" required placeholder="Your email address" autocomplete="email"></label><button class="btn gold">Subscribe</button></form></div>
 <div class="ftr-bot"><span>© {NOW.year} {E(BRAND)}. All rights reserved.</span><span class="soc">{soc}</span><span><a href="/privacy-policy/">Privacy Policy</a> · <a href="/terms/">Terms</a> · <a href="/blog/">Blog</a></span></div>
 <p class="disc">Cosmetic product designed to support healthier, fuller-looking hair. Not intended to diagnose, treat, cure or prevent any disease. Results vary. If you have a scalp condition, consult a dermatologist.</p></footer>
 <div class="mbar"><div>{price_html()}</div>{cod_button("Order Now – COD","btn gold")}</div>
@@ -374,8 +377,8 @@ def build_pages():
          crumb=[("Returns & Refunds", "/returns/")])
     page("/privacy-policy/", "Privacy Policy", "How Envoquee collects, uses and protects personal information from orders and the contact form.",
          section("legal", f'''<h1 class="h1">Privacy policy</h1><p>Last updated: {NOW.strftime("%d %B %Y")}</p>
-<h2>What we collect</h2><p>When you place a cash-on-delivery order we collect your name, phone number, city, delivery address, quantity and any notes you add. When you use the contact form we collect your name, phone and/or email and your message. We also log your approximate country and basic technical data needed to prevent spam and abuse.</p>
-<h2>How we use it</h2><p>Only to confirm, deliver and support your order, reply to your messages, and protect the site from abuse. We share delivery details with our courier partner only to deliver your parcel. We do not sell your data.</p>
+<h2>What we collect</h2><p>When you place a cash-on-delivery order we collect your name, phone number, city, delivery address, quantity, optional email and any notes you add. If you subscribe to our newsletter we store your email address until you unsubscribe (every newsletter has an unsubscribe link). Order reminder emails are only sent if you tick the reminder box. When you use the contact form we collect your name, phone and/or email and your message. We also log your approximate country and basic technical data needed to prevent spam and abuse.</p>
+<h2>How we use it</h2><p>Only to confirm, deliver and support your order, send order status emails, reply to your messages, and protect the site from abuse. We share delivery details with our courier partner only to deliver your parcel. We do not sell your data.</p>
 <h2>Analytics &amp; cookies</h2><p>We may use Google Analytics to understand how visitors use the site, which sets cookies. The admin area uses a strictly necessary security cookie. You can block cookies in your browser settings.</p>
 <h2>Storage &amp; retention</h2><p>Orders and messages are stored securely on Cloudflare infrastructure and kept only as long as needed for orders, support and legal record keeping.</p>
 <h2>Your choices</h2><p>You can ask us to view, correct or delete your personal data through our <a href="/contact/">contact page</a>.</p>'''),
@@ -389,6 +392,8 @@ def build_pages():
 <h2>Content</h2><p>Blog articles are general information, not medical advice.</p>
 <h2>Contact</h2><p>Questions about these terms? <a href="/contact/">Contact us</a>.</p>'''),
          crumb=[("Terms", "/terms/")])
+    page("/thanks/", "You're subscribed", "Thanks for subscribing to Envoquee.", section("", '<div class="ty"><h1 class="h1">You\'re subscribed</h1><p class="lead">Thank you for joining. Our scalp care guides will reach your inbox.</p><p><a class="btn line" href="/blog/">Read the blog</a></p></div>'), noindex=True)
+    page("/unsubscribe/", "Unsubscribe", "Unsubscribe from Envoquee emails.", section("", '<div class="ty"><h1 class="h1">Unsubscribe</h1><p class="lead" id="unsub-msg">Click below to stop receiving Envoquee newsletters.</p><p><button class="btn gold" id="unsub-btn" type="button">Unsubscribe</button></p></div>'), noindex=True)
     page("/order/thank-you/", "Thank you for your order", "Your Envoquee order has been received.",
          section("", '<div class="ty"><h1 class="h1">Thank you, your order is placed</h1><p class="lead">Your order number is</p><p class="oid" id="oid">—</p><p>Please keep this number. Our team will call you on the number you provided to confirm your order before dispatch. Pay in cash when your parcel arrives.</p><p><a class="btn gold" href="/track-order/" id="trk">Track your order</a> <a class="btn line" href="/blog/">Read our scalp care tips</a></p></div>'), noindex=True)
     page("/track-order/", "Track Your Order", "Check the status of your Envoquee cash-on-delivery order with your order number and phone.",
