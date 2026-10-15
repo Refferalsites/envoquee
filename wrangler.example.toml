@@ -1,0 +1,8 @@
+# Reference only (a wrangler.toml in the repo would override dashboard bindings). Local dev:
+#   wrangler pages dev public --kv STORE   (with .dev.vars holding ADMIN_USERNAME / ADMIN_PASSWORD_SHA256 / SESSION_SECRET)
+name = "envoquee"
+pages_build_output_dir = "public"
+compatibility_date = "2026-10-01"
+[[kv_namespaces]]
+binding = "STORE"
+id = "fa170f20906648909e709aabc655d978"

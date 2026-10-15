@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Envoquee Admin</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/admin/admin.css"></head><body>
+<div id="login" class="center" hidden><form id="lf" class="box"><h1>Envo<em>quee</em> Admin</h1><label>Username<input name="username" autocomplete="username" required></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required></label><button>Sign in</button><p id="lerr" class="err" role="alert"></p></form></div>
+<div id="app" hidden><header><strong>Envo<em>quee</em> Admin</strong><nav><button data-tab="orders" class="on">Orders</button><button data-tab="posts">Blog posts</button><button data-tab="product">Product</button><button data-tab="settings">Settings</button><button data-tab="seo">SEO &amp; Integrations</button><button data-tab="idx">Auto Indexing</button><button data-tab="msgs">Messages</button></nav><span><a href="/" target="_blank">View site ↗</a> <button id="logout" class="ghost">Log out</button></span></header>
+<main><p id="msg" role="status"></p>
+<section id="t-orders"><h2>Cash on Delivery orders</h2><div class="otools"><button type="button" id="oreload" class="ghost">Refresh</button><select id="ofilter"><option value="">All statuses</option><option>new</option><option>confirmed</option><option>shipped</option><option>delivered</option><option>cancelled</option></select><input id="osearch" placeholder="Search name, phone, city, order no."><a class="btnlink" id="ocsv" href="/api/admin-api?action=orders-csv">⬇ Export CSV</a></div><div id="ocount" class="cnt"></div><div id="olist" class="log tw"></div></section>
+<section id="t-posts" hidden><div class="split"><aside><button id="newpost">+ New post</button><ul id="plist"></ul></aside>
+<form id="pf" hidden><h2 id="ptitle">Edit post</h2><div class="g2"><label>Title<input name="title" required></label><label>Slug (URL)<input name="slug" pattern="[a-z0-9][a-z0-9-]+" required></label>
+<label>Publish date &amp; time (your local time)<input name="date" type="datetime-local" required></label><label>Status<select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+<label>Category (pick or type a new one)<input name="category" list="pcat"><datalist id="pcat"></datalist></label><label>Image<select name="image" id="pimg"></select></label></div>
+<label>Question this post answers<input name="question" placeholder="e.g. Does hard water cause hair fall?"></label>
+<label>Description (SEO, ~155 chars)<textarea name="description" rows="2" maxlength="300"></textarea></label>
+<label>Body (Markdown)<textarea name="body" rows="22"></textarea></label>
+<details class="help"><summary>Formatting &amp; scheduling</summary><p>Use <code>## Heading</code>, <code>- list</code>, <code>1. step</code>, <code>**bold**</code>, <code>[link](/how-to-use/)</code>. Start with <code>**Short answer:** …</code>. Avoid medical claims (no "regrows hair" / "cures baldness").</p>
+<p>Scheduling: status <b>Published</b> + a future date = goes live automatically on the first build after that time (builds run daily at 09:15 and 21:15 PKT, and on every save).</p></details>
+<div class="row"><button>Save &amp; publish to site</button><button type="button" id="delpost" class="danger">Delete</button></div></form></div></section>
+<section id="t-product" hidden><form id="prf"><h2>Price &amp; stock</h2><div class="g2"><label>Product name<input name="name" required></label><label>Short name<input name="short_name"></label>
+<label>Regular price (PKR)<input name="price" type="number" min="1" required></label><label>Sale price (PKR)<input name="sale_price" type="number" min="1" required></label>
+<label>Max quantity per order<input name="max_qty" type="number" min="1" max="50"></label><label class="cb"><input type="checkbox" name="in_stock"> In stock (orders open)</label></div>
+<label>Summary (shown on product page, schema &amp; feed)<textarea name="summary" rows="3"></textarea></label>
+<h2>Details (empty = shows "to be confirmed" on site)</h2><div class="g2"><label>Serum bottle size<input name="details.serum_size" placeholder="e.g. 30 ml"></label><label>Prep spray size<input name="details.spray_size"></label>
+<label>Derma roller needle length<input name="details.needle_length" placeholder="e.g. 0.5 mm"></label><label>How often to use<input name="details.frequency"></label></div>
+<label>Ingredients (full INCI list)<textarea name="details.ingredients" rows="3"></textarea></label><label>Directions<textarea name="details.directions" rows="3"></textarea></label>
+<label>Results timeline (what to expect; no medical promises)<textarea name="details.results_timeline" rows="2"></textarea></label><label>Warnings<textarea name="details.warnings" rows="2"></textarea></label>
+<h2>Gallery images</h2><p class="small">Order = gallery order. First image is the main image. Upload .webp/.jpg/.png (max 3 MB).</p><div id="imgs" class="imgs"></div><p><input type="file" id="imgup" accept="image/webp,image/jpeg,image/png"></p>
+<h2>Customer reviews (real only)</h2><p class="small">Only add genuine reviews from real customers, with their permission. One per line: <code>Name | City | Rating 1-5 | Review text | Date</code>. The reviews section is hidden on the site when this is empty.</p><textarea id="revs" rows="5"></textarea>
+<p><button>Save product</button></p></form></section>
+<section id="t-settings" hidden><form id="sf"><h2>General</h2><div class="g2"><label>Site name<input name="site_name"></label><label>Tagline<input name="tagline"></label>
+<label>Announcement bar<input name="announcement"></label><label>Contact email<input name="contact_email" type="email"></label><label>Contact phone<input name="contact_phone"></label><label>WhatsApp number<input name="whatsapp"></label>
+<label>Business address<input name="address"></label><label>Hours<input name="hours" placeholder="Mon–Sat, 10am–7pm PKT"></label></div>
+<h2>Shipping &amp; returns</h2><div class="g2"><label>Delivery time<input name="shipping.delivery_time" placeholder="e.g. 2–4 working days in major cities"></label><label>Delivery charge (PKR, number only; empty = confirmed on call)<input name="shipping.delivery_charge" inputmode="numeric"></label>
+<label>Free delivery over (PKR, number only)<input name="shipping.free_delivery_over" inputmode="numeric"></label><label>Shipping notes<input name="shipping.notes"></label></div>
+<label>Returns &amp; refunds policy<textarea name="returns_policy" rows="5"></textarea></label>
+<h2>Social links</h2><div class="g2"><label>Instagram<input name="social.instagram" type="url"></label><label>Facebook<input name="social.facebook" type="url"></label><label>TikTok<input name="social.tiktok" type="url"></label><label>YouTube<input name="social.youtube" type="url"></label></div><button>Save settings</button></form></section>
+<section id="t-seo" hidden><form id="seof"><h2>Google Search Console</h2><label>Verification meta tag or content value<input name="seo.google_site_verification" placeholder='&lt;meta name="google-site-verification" content="..."&gt;'></label>
+<label>Bing verification (msvalidate.01)<input name="seo.bing_site_verification"></label>
+<div class="info"><p>Sitemap (auto-generated on every build): <a id="smurl" target="_blank"></a></p><p>Submit once in Search Console → Sitemaps → <code>sitemap.xml</code>. It is also listed in robots.txt.</p><button type="button" id="gscsubmit" class="ghost">Submit sitemap via Search Console API</button></div>
+<h2>Analytics</h2><div class="g2"><label>GA4 Measurement ID<input name="seo.ga4_id" placeholder="G-XXXXXXX" pattern="G-[A-Z0-9]+"></label><label>Google Tag Manager ID (overrides GA4 if set)<input name="seo.gtm_id" placeholder="GTM-XXXXXX" pattern="GTM-[A-Z0-9]+"></label></div>
+<h2>Google Merchant Center</h2><div class="g2"><label>Merchant Center ID<input name="seo.merchant_center_id" inputmode="numeric"></label><label>Google product category ID<input name="seo.google_product_category" placeholder="e.g. 2441 (Hair Care)"></label></div>
+<label class="cb"><input type="checkbox" name="seo.merchant_feed_enabled"> Generate product feed</label>
+<div class="info"><p>Feed URL: <a id="mfurl" target="_blank"></a></p><p>Merchant Center → Products → Add product source → "Add products from a file" → "Enter a link to your file", paste the feed URL, schedule daily.</p><button type="button" id="mcstatus" class="ghost">Check Merchant account via API</button></div>
+<h2>Secret keys status</h2><p class="small">Secrets live only in Cloudflare Pages → Settings → Variables and Secrets. Values are never shown here.</p><ul id="secrets" class="secrets"></ul>
+<button>Save SEO settings</button></form></section>
+<section id="t-idx" hidden><h2>IndexNow (Bing, Yandex, Seznam, Naver…)</h2>
+<div class="info"><p>Runs automatically after every successful deploy: new or changed URLs are sent to <code>api.indexnow.org</code>. Key file: <a id="ikurl" target="_blank"></a></p>
+<label>IndexNow key<input id="ikey" form="seof" name="seo.indexnow_key" pattern="[a-zA-Z0-9-]{8,128}"></label><button type="button" id="inall">Submit all URLs now</button></div><h3>Recent IndexNow submissions</h3><div id="inlog" class="log"></div>
+<h2>Google Indexing API</h2><div class="info"><p>Secret <code>GOOGLE_INDEXING_SA_JSON</code>: <b id="gstat"></b>. If set, new or updated blog post URLs are sent as <code>URL_UPDATED</code> after each deploy.</p>
+<p class="small">Google officially supports the Indexing API only for JobPosting/BroadcastEvent pages; for normal pages the sitemap is the main method. Setup: Google Cloud → enable "Web Search Indexing API" → service account → JSON key → add its email as Owner in Search Console → paste JSON into the Cloudflare Pages secret <code>GOOGLE_INDEXING_SA_JSON</code>.</p>
+<button type="button" id="gnow" class="ghost">Send changed blog posts to Google now</button></div><h3>Recent Google Indexing runs</h3><div id="glog" class="log"></div><p><button type="submit" form="seof">Save key</button></p></section>
+<section id="t-msgs" hidden><h2>Contact messages</h2><p><button type="button" id="msgreload" class="ghost">Refresh</button></p><div id="msglist" class="log"></div></section></main></div>
+<script src="/admin/admin.js"></script></body></html>

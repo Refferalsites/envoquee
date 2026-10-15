@@ -1,0 +1,44 @@
+name: Deploy (Cloudflare Pages)
+# Build static site, upload to Cloudflare Pages (Direct Upload), then notify IndexNow.
+# push: normal pushes + admin edits (committed via GITHUB_TOKEN PAT) · schedule: scheduled-publish builds
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "15 4 * * *"    # 09:15 PKT
+    - cron: "15 16 * * *"   # 21:15 PKT
+  workflow_dispatch:
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - name: Build
+        env:
+          SITE_URL: https://envoquee.pages.dev
+        run: |
+          export GITHUB_SHA=$(git rev-parse HEAD)
+          python3 build.py
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy public --project-name=envoquee --branch=main --commit-dirty=true
+      - name: IndexNow (submit new/changed URLs)
+        env:
+          SECRET: ${{ secrets.INDEXNOW_HOOK_SECRET }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+          for i in $(seq 1 20); do
+            live=$(curl -fsS "https://envoquee.pages.dev/build-id.txt?t=$(date +%s)" || true)
+            [ "$live" = "$SHA" ] && break; sleep 6
+          done
+          curl -fsS -X POST -H "x-hook-secret: $SECRET" https://envoquee.pages.dev/api/indexnow-hook || echo "IndexNow call failed (non-fatal)"

@@ -1,0 +1,9 @@
+public/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.wrangler/
+.dev.vars
+functions/_lib/pricing.js
+screens/*-fold.png
