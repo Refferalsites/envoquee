@@ -9,4 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - run: curl -fsS -X POST -H "x-cron-secret: ${{ secrets.INDEXNOW_HOOK_SECRET }}" https://envoquee.pages.dev/api/cron
+      - name: Run email jobs
+        env:
+          SECRET: ${{ secrets.INDEXNOW_HOOK_SECRET }}
+        run: |
+          curl -fsS -X POST -H "x-cron-secret: $SECRET" https://envoquee.pages.dev/api/cron
