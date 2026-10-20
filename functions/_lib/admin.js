@@ -2,7 +2,7 @@
 export const COOKIE = "env_admin";
 const TTL = 8 * 3600;
 const te = new TextEncoder();
-export const repo = (env) => env.GITHUB_REPO || "Refferalsites/envoquee";
+export const repo = (env) => env.GITHUB_REPO || "envoquee/envoquee";
 export const branch = (env) => env.GITHUB_BRANCH || "main";
 export const siteUrl = (env, req) => (env.SITE_URL || (req ? new URL(req.url).origin : "https://envoquee.pages.dev")).replace(/\/$/, "");
 export const has = (env, k) => Boolean(env[k]);
