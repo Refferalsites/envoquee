@@ -234,6 +234,38 @@ STEPS = [("Prep", "Start with a clean, dry scalp. Spray the Anti Septic prep on 
 def steps_html():
     return '<ol class="steps">' + "".join(f'<li><span>{i+1}</span><h3>{t}</h3><p>{d}</p></li>' for i, (t, d) in enumerate(STEPS)) + "</ol>"
 
+ING = [
+    ("minoxidil", "Minoxidil 5%", "The active ingredient. Topical minoxidil is the most studied over-the-counter treatment for pattern hair loss in men and women. It works only while you keep using it."),
+    ("biotin", "Biotin", "A B vitamin (B7) involved in keratin production. Low biotin can affect hair, but evidence that applying it to the scalp helps hair growth is limited."),
+    ("d-panthenol", "D-Panthenol", "Provitamin B5. Helps hair and scalp hold moisture and leaves strands softer and easier to manage."),
+    ("wheat-protein", "Wheat Protein", "Coats the hair shaft to help strengthen it and make strands feel fuller. Avoid if you are allergic to wheat."),
+    ("ethanol", "Ethanol", "The alcohol base that dissolves minoxidil and helps the serum dry quickly. It can dry or irritate a sensitive scalp."),
+]
+def ingredients_html():
+    cards = "".join(f'<article class="ing"><img src="/img/ing-{k}-600.webp" srcset="/img/ing-{k}-600.webp 600w, /img/ing-{k}-1200.webp 1200w" sizes="(max-width:800px) 50vw, 20vw" width="600" height="405" loading="lazy" decoding="async" alt="{E(n)} ingredient graphic"><h3>{E(n)}</h3><p>{E(d)}</p></article>' for k, n, d in ING)
+    return f'<h2 class="h2">Ingredients</h2><p class="lead">The serum contains Minoxidil 5%, Biotin, D-Panthenol, Wheat Protein and Ethanol.</p><div class="ings">{cards}</div><p><a href="/ingredients/">Ingredients &amp; safety →</a></p>'
+def safety_html():
+    return ('<div class="safety"><h2 class="h2">Minoxidil safety: read before use</h2><ul class="list">'
+            '<li><b>Give it time:</b> results usually take 3–6 months of regular use, and vary from person to person.</li>'
+            '<li><b>Early shedding is possible:</b> some people shed more in the first weeks. This is common and usually settles.</li>'
+            '<li><b>Not for pregnant or breastfeeding women,</b> or anyone under 18.</li>'
+            '<li><b>Consult a doctor before use,</b> especially if you have a heart condition, blood pressure problems or a scalp condition, or take other medicines.</li>'
+            '<li><b>Stop and see a doctor</b> if you get chest pain, a fast heartbeat, dizziness, swelling of the hands or feet, or scalp irritation.</li>'
+            '<li><b>It is not a cure.</b> Minoxidil can help some people while they use it; any benefit fades if you stop.</li></ul>'
+            '<p class="small">General information, not medical advice. For external use only. Contains alcohol: keep away from eyes and flame.</p></div>')
+def problem_html():
+    return ('<div class="split prob"><div><figure class="cust"><img src="/img/customer-thinning-600.webp" width="456" height="456" loading="lazy" decoding="async" alt="Customer photo: top of a man\'s head showing thinning hair on the crown">'
+            '<figcaption>Customer photo of thinning (not a result photo)</figcaption></figure></div>'
+            '<div><h2 class="h2">A common hair fall problem</h2><p>Thinning on the crown and top of the head, where the scalp starts to show through, is one of the most common patterns of hair loss. In men it is usually genetic (male pattern hair loss). Women more often notice a widening parting.</p>'
+            '<p>Other causes include stress, illness, low iron, thyroid problems, pregnancy and crash dieting, so it is worth seeing a doctor or dermatologist to find the cause first.</p>'
+            '<p>Topical minoxidil is one of the options with the most evidence for pattern thinning. It takes 3–6 months to judge, and it is not a cure.</p></div></div>')
+SAFETY_FAQ = [
+    ("Does the serum contain minoxidil?", "Yes. The serum contains Minoxidil 5%, along with Biotin, D-Panthenol, Wheat Protein and Ethanol."),
+    ("How long does minoxidil take to work?", "Usually 3–6 months of regular use before any change is visible, and results vary. Any benefit fades if you stop using it. It is not a cure for hair loss."),
+    ("Is shedding normal when starting minoxidil?", "Some people notice extra shedding in the first weeks. This is common and usually settles. If it continues or worries you, speak to a doctor."),
+    ("Can I use it while pregnant or breastfeeding?", "No. Minoxidil is not for pregnant or breastfeeding women. Speak to your doctor about safer options."),
+    ("Should I see a doctor before using minoxidil?", "Yes, consult a doctor first, especially if you have a heart condition, blood pressure problems, a scalp condition, or take other medicines. Stop and get medical advice if you notice chest pain, a fast heartbeat, dizziness or swelling."),
+]
 FAQ = [
     ("What is included in the Envoquee Hair Serum Kit?", "The black-and-gold gift box contains Envoquee Hair Regrowth Serum in black glass dropper bottles, an “Anti Septic for Prep” spray and a derma roller with 540 stainless steel needles and a protective case."),
     ("What is the price of the Envoquee kit in Pakistan?", f"The kit's regular price is {rs(P['price'])}. It is currently on sale for {rs(P['sale_price'])}, which is {pct}% off."),
@@ -243,12 +275,13 @@ FAQ = [
     ("Can I use the derma roller on my beard?", "Yes. The Envoquee derma roller is made for both the scalp and the beard. Use lighter pressure on the face and never roll on freshly shaved, irritated or broken skin."),
     ("In what order should I use the kit?", "Prep first with the Anti Septic spray, then roll gently with the derma roller, then apply the serum. Always follow the directions printed in your kit for how often to use it."),
     ("What is the Anti Septic prep spray for?", "It is used to prep the skin and the roller before rolling, because hygiene is the most important part of any derma rolling routine."),
-    ("What are the serum's ingredients?", "The full ingredient list will be published on our Ingredients page. Until then, please check the label on your bottle and patch test before first use."),
+    ("What are the serum's ingredients?", "Minoxidil 5%, Biotin, D-Panthenol, Wheat Protein and Ethanol. Patch test first, and read the safety notes on the Ingredients page before use."),
     ("Does scalp derma rolling hurt?", "Most people describe a light prickling feeling when rolling gently. If it is painful, you are pressing too hard. Stop if you see bleeding, irritation or broken skin."),
     ("Can I share my derma roller with family?", "No. A derma roller should only ever be used by one person, to avoid passing on bacteria or infections."),
     ("Who should avoid using a derma roller?", "Don't roll over cuts, acne, sunburn, eczema, psoriasis or any scalp infection. If you are pregnant, breastfeeding, diabetic, take blood thinners or have a skin condition, speak to a doctor first."),
     ("How do I track my Envoquee order?", "Use the Track Your Order page with your order number (shown after ordering, starting with ENV-) and the phone number you ordered with."),
 ]
+FAQ += SAFETY_FAQ
 def faq_html(items):
     return '<div class="faq">' + "".join(f'<details><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in items) + "</div>"
 FAQ_LD = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
@@ -295,13 +328,15 @@ def build_pages():
     stock = '<p class="stock in">In stock · ready to dispatch</p>' if P.get("in_stock") else '<p class="stock out">Currently out of stock</p>'
     specs = [("Contents", "Hair Regrowth Serum (black glass dropper bottles), Anti Septic for Prep spray, derma roller with case"), ("Derma roller", "540 stainless steel needles, non-slip handle, for scalp and beard")]
     spec_rows = "".join(f"<tr><th>{a}</th><td>{E(b)}</td></tr>" for a, b in specs) + "".join(f"<tr><th>{l}</th><td>{pending(f,'To be confirmed')}</td></tr>" for l, f in [("Serum size", "serum_size"), ("Spray size", "spray_size"), ("Needle length", "needle_length"), ("Ingredients", "ingredients"), ("How often to use", "frequency")])
-    pq = [FAQ[0], FAQ[1], FAQ[2], FAQ[4], FAQ[5], FAQ[6], FAQ[10], FAQ[11]]
+    pq = [FAQ[0], FAQ[1], FAQ[2], FAQ[4], FAQ[5], FAQ[6], FAQ[10], FAQ[11]] + SAFETY_FAQ
     prod = f'''<section class="pdp"><div class="in pdp-in"><div class="gallery"><div class="main-img">{pic(GALLERY[0]["src"], GALLERY[0]["alt"], lazy=False, sizes="(max-width:900px) 100vw, 55vw")}</div><div class="thumbs">{thumbs}</div></div>
 <div class="buy"><p class="eyebrow">{E(BRAND)}</p><h1 class="h1">{E(P["name"])}</h1>{price_html(True)}<p class="save">You save {rs(P["price"]-P["sale_price"])}</p>{stock}
 <p>{E(P["summary"])}</p><ul class="ticks"><li>Serum + Anti Septic prep spray + 540-needle derma roller</li><li>For scalp and beard</li><li>Cash on Delivery across Pakistan</li></ul>
 {cod_button("Order Now – Cash on Delivery", "btn gold wide")}<p class="fine">Pay in cash when your parcel arrives. We call to confirm first.</p></div></div></section>
 {section("dark", f'<h2 class="h2">The three-step ritual</h2>{steps_html()}')}
 {section("", f'<div class="split"><div><h2 class="h2">What\'s inside</h2>{kit_cards()}</div></div>')}
+{section("", ingredients_html() + safety_html())}
+{section("", problem_html())}
 {section("", f'<h2 class="h2">Product details</h2><table class="spec">{spec_rows}</table><p class="small">Details marked “to be confirmed” will be added soon. Always read the label and directions in your kit.</p>')}
 {section("order-sec", f'<div class="split"><div><h2 class="h2">Order with Cash on Delivery</h2>{price_html(True)}<ul class="ticks"><li>No advance payment</li><li>Confirmation call before dispatch</li></ul><p><a href="/shipping/">Shipping &amp; delivery</a> · <a href="/returns/">Returns</a></p></div><div class="panel">{order_form("cod-pdp")}</div></div>', "order")}
 {reviews_html()}
@@ -322,7 +357,7 @@ def build_pages():
          section("", f'<h1 class="h1">How to use the kit</h1><p class="lead">Three steps: prep, roll, serum. Always follow the directions printed in your kit.</p>{steps_html()}') +
          section("", f'<h2 class="h2">Directions &amp; frequency</h2><table class="spec"><tr><th>Directions from Envoquee</th><td>{pending("directions","Full directions coming soon. Follow the leaflet in your kit.")}</td></tr><tr><th>How often</th><td>{pending("frequency","To be confirmed. Follow the leaflet in your kit.")}</td></tr><tr><th>What to expect</th><td>{pending("results_timeline","Timeline coming soon. Hair grows slowly, so give any routine time.")}</td></tr></table>'
                  '<h2 class="h2">Good habits</h2><ul class="list"><li>Wash and fully dry your hair first, ideally in the evening.</li><li>Use light pressure. Never roll hard enough to bleed.</li><li>Don\'t roll on cuts, pimples, sunburn or irritated skin.</li><li>Clean the roller before and after every use and keep it in its case.</li><li>Never share your roller.</li><li>Patch test the serum on a small area first.</li></ul>'
-                 f'<p>{cod_button()} <a class="btn line" href="/derma-roller-safety/">Safety &amp; care</a></p>'),
+                 + safety_html() + f'<p>{cod_button()} <a class="btn line" href="/derma-roller-safety/">Safety &amp; care</a></p>'),
          crumb=[("How to Use", "/how-to-use/")], schema=[{"@context": "https://schema.org", "@type": "HowTo", "name": "How to use the Envoquee Hair Serum Kit", "step": [{"@type": "HowToStep", "name": t, "text": d} for t, d in STEPS]}])
     # ---------- SAFETY
     page("/derma-roller-safety/", "Derma Roller Safety & Care Guide", "How to clean, store and safely use a scalp and beard derma roller: hygiene, pressure, who should avoid it and when to replace it.",
@@ -339,7 +374,7 @@ def build_pages():
     page("/ingredients/", "Envoquee Hair Serum Ingredients", "Envoquee Hair Regrowth Serum ingredient list and how to patch test before first use.",
          section("", f'<h1 class="h1">Ingredients</h1><div class="split"><div>{pic("serum-dropper")}</div><div>' +
                  (f'<h2 class="h2">Hair Regrowth Serum</h2><p class="inci">{E(ing)}</p>' if ing else '<p class="lead">We will publish the full ingredient list here soon.</p><p>Until then, please read the label on your bottle. If you have known allergies, check every ingredient before use.</p>') +
-                 '<h2>Patch test first</h2><p>Apply a small amount to the inside of your forearm or behind the ear and wait 24 hours. If you see redness, itching or swelling, don\'t use it.</p>' + cod_button() + '</div></div>'),
+                 '<h2>Patch test first</h2><p>Apply a small amount to the inside of your forearm or behind the ear and wait 24 hours. If you see redness, itching or swelling, don\'t use it.</p>' + cod_button() + '</div></div>') + section("", ingredients_html() + safety_html()),
          crumb=[("Ingredients", "/ingredients/")])
     # ---------- FAQ
     page("/faq/", "Envoquee Questions & Answers", "Answers about the Envoquee Hair Serum Kit: price in Pakistan, cash on delivery, what's included, derma roller use on scalp and beard, and safety.",
@@ -408,7 +443,7 @@ def build_blog():
         art = f'''<article class="post"><header class="ph"><div class="in narrow"><a class="cat" href="{cat_url(p["category"])}">{E(p["category"])}</a><h1 class="h1">{E(p["title"])}</h1>
 {f'<p class="q">Question: {E(p["question"])}</p>' if p.get("question") else ""}<p class="meta">By the {E(BRAND)} team · <time datetime="{p["dt"].isoformat()}">{fmt_date(p["dt"])}</time> · {max(1, round(words(p)/200))} min read</p></div></header>
 <div class="in narrow">{pic(key, alt=p["title"], lazy=False, cls="hero-pic", sizes="(max-width:800px) 100vw, 760px")}<div class="prose">{body}</div>
-<aside class="pbox">{pic("kit-beige", sizes="160px")}<div><b>{E(P["name"])}</b>{price_html()}<p>Serum, Anti Septic prep spray and 540-needle derma roller. Cash on delivery across Pakistan.</p>{cod_button("Order Now – COD", "btn gold")} <a href="{PRODUCT_URL}" class="btn line">View kit</a></div></aside>
+<aside class="pbox">{pic("kit-beige", sizes="160px")}<div><b>{E(P["name"])}</b>{price_html()}<p>Serum (Minoxidil 5%, Biotin, D-Panthenol, Wheat Protein), Anti Septic prep spray and 540-needle derma roller. Cash on delivery across Pakistan.</p><p class="small">Minoxidil takes 3–6 months, early shedding is possible. Not for pregnancy or breastfeeding; consult a doctor first.</p>{cod_button("Order Now – COD", "btn gold")} <a href="{PRODUCT_URL}" class="btn line">View kit</a></div></aside>
 <p class="small">General information only, not medical advice. See a dermatologist for hair loss or scalp conditions.</p></div></article>
 {section("blog-sec dark", f'<div class="sh"><h2 class="h2">Related articles</h2><a class="more" href="/blog/">All articles →</a></div><div class="cards">{"".join(post_card(x) for x in rel)}</div>')}'''
         page(f"/blog/{p['slug']}/", p["title"], p.get("description", ""), art, crumb=[("Blog", "/blog/"), (E(p["category"]), cat_url(p["category"])), (E(p["title"]), f"/blog/{p['slug']}/")],
