@@ -2,8 +2,9 @@
 title: "Hard water and your hair: what to know in Pakistani cities"
 date: "2026-10-07T10:00:00+05:00"
 description: "Hard and borewell water is common in many Pakistani homes. Here's how mineral build-up can affect hair feel and simple ways to reduce it."
-image: "/img/serum-dropper-1200.webp"
+image: "/img/cover-hard-water-hair-pakistan-1200.webp"
 question: "Does hard water cause hair fall?"
+image_alt: "Tap with limescale pouring water into a steel glass"
 category: "Scalp Care"
 status: published
 ---

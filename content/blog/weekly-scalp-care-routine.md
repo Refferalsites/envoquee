@@ -2,8 +2,9 @@
 title: "A simple weekly scalp care routine"
 date: "2026-10-09T10:00:00+05:00"
 description: "A realistic weekly scalp care plan for busy people in Pakistan: washing, massage, oiling, derma rolling days and rest days."
-image: "/img/kit-beige-1200.webp"
+image: "/img/cover-weekly-scalp-care-routine-1200.webp"
 question: "What is a good scalp care routine?"
+image_alt: "Weekly planner, wide-tooth comb, mild shampoo and towel laid out"
 category: "Scalp Care"
 status: published
 ---

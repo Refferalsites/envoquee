@@ -35,7 +35,7 @@ def pic(key, alt=None, cls="", lazy=True, sizes="(max-width:800px) 100vw, 50vw")
     alt = alt or IMG.get(key, BRAND)
     load = 'loading="lazy"' if lazy else 'fetchpriority="high"'
     return (f'<img src="/img/{key}-1200.webp" srcset="/img/{key}-600.webp 600w, /img/{key}-1200.webp 1200w" sizes="{sizes}" '
-            f'alt="{E(alt)}" class="{cls}" width="1200" height="1200" {load} decoding="async">')
+            f'alt="{E(alt)}" class="{cls}" width="1200" height="{750 if key.startswith("cover-") else 1200}" {load} decoding="async">')
 def img_url(key):
     return key if key.startswith("/") else f"/img/{key}-1200.webp"
 
@@ -215,7 +215,7 @@ def section(cls, inner, id_=""):
     return f'<section class="sec {cls}"{f" id={id_}" if id_ else ""}><div class="in">{inner}</div></section>'
 
 def post_card(p, lazy=True):
-    return (f'<article class="card"><a href="/blog/{p["slug"]}/" class="ci">{pic(p["image"].replace("/img/","").replace("-1200.webp",""), alt=p["title"], sizes="(max-width:800px) 100vw, 33vw") if p.get("image","").startswith("/img/") and p["image"].endswith("-1200.webp") else pic(p.get("image") or "kit-beige", alt=p["title"])}</a>'
+    return (f'<article class="card"><a href="/blog/{p["slug"]}/" class="ci">{pic(p["image"].replace("/img/","").replace("-1200.webp",""), alt=(p.get("image_alt") or p["title"]), sizes="(max-width:800px) 100vw, 33vw") if p.get("image","").startswith("/img/") and p["image"].endswith("-1200.webp") else pic(p.get("image") or "kit-beige", alt=(p.get("image_alt") or p["title"]))}</a>'
             f'<div class="cb"><a class="cat" href="{cat_url(p["category"])}">{E(p["category"])}</a><h3><a href="/blog/{p["slug"]}/">{E(p["title"])}</a></h3><p>{E(p.get("description",""))}</p>'
             f'<span class="meta">{fmt_date(p["dt"])} · {max(1, round(words(p)/200))} min read</span></div></article>')
 
@@ -443,7 +443,7 @@ def build_blog():
         key = p["image"].replace("/img/", "").replace("-1200.webp", "") if p.get("image", "").endswith("-1200.webp") else "kit-beige"
         art = f'''<article class="post"><header class="ph"><div class="in narrow"><a class="cat" href="{cat_url(p["category"])}">{E(p["category"])}</a><h1 class="h1">{E(p["title"])}</h1>
 {f'<p class="q">Question: {E(p["question"])}</p>' if p.get("question") else ""}<p class="meta">By the {E(BRAND)} team · <time datetime="{p["dt"].isoformat()}">{fmt_date(p["dt"])}</time> · {max(1, round(words(p)/200))} min read</p></div></header>
-<div class="in narrow">{pic(key, alt=p["title"], lazy=False, cls="hero-pic", sizes="(max-width:800px) 100vw, 760px")}<div class="prose">{body}</div>
+<div class="in narrow">{pic(key, alt=(p.get("image_alt") or p["title"]), lazy=False, cls="hero-pic", sizes="(max-width:800px) 100vw, 760px")}<div class="prose">{body}</div>
 <aside class="pbox">{pic("kit-beige", sizes="160px")}<div><b>{E(P["name"])}</b>{price_html()}<p>Serum (Minoxidil 5%, Biotin, D-Panthenol, Wheat Protein), Anti Septic prep spray and 540-needle derma roller. Cash on delivery across Pakistan.</p><p class="small">Minoxidil takes 3–6 months, early shedding is possible. Not for pregnancy or breastfeeding; consult a doctor first.</p>{cod_button("Order Now – COD", "btn gold")} <a href="{PRODUCT_URL}" class="btn line">View kit</a></div></aside>
 <p class="small">General information only, not medical advice. See a dermatologist for hair loss or scalp conditions.</p></div></article>
 {section("blog-sec dark", f'<div class="sh"><h2 class="h2">Related articles</h2><a class="more" href="/blog/">All articles →</a></div><div class="cards">{"".join(post_card(x) for x in rel)}</div>')}'''

@@ -2,8 +2,9 @@
 title: "Hair fall in Pakistani summers: heat, sweat and humidity"
 date: "2026-10-04T10:00:00+05:00"
 description: "Why many people notice more hair fall during Pakistan's hot, humid months, and simple scalp habits that help keep hair looking healthier."
-image: "/img/serum-bottle-1200.webp"
+image: "/img/cover-summer-hair-fall-heat-humidity-1200.webp"
 question: "Why does my hair fall more in summer in Pakistan?"
+image_alt: "Pakistani man with a sweaty hairline in the summer heat"
 category: "Hair Fall"
 status: published
 ---

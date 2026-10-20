@@ -2,8 +2,9 @@
 title: "Scalp derma rolling: a beginner's guide for Pakistan"
 date: "2026-10-01T10:00:00+05:00"
 description: "What a scalp derma roller is, how a basic prep-roll-serum routine works, and the hygiene habits that matter most in Pakistan's heat and dust."
-image: "/img/derma-roller-1200.webp"
+image: "/img/cover-derma-rolling-scalp-beginners-guide-1200.webp"
 question: "What is scalp derma rolling and how do beginners start?"
+image_alt: "Clean vanity set up for a scalp session with towel and water, and the hair serum kit"
 category: "Derma Rolling"
 status: published
 ---

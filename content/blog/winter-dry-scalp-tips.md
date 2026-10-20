@@ -2,8 +2,9 @@
 title: "Winter dry scalp: tips for Lahore, Islamabad and the north"
 date: "2026-11-05T10:00:00+05:00"
 description: "Cold, dry winters and hot showers can leave the scalp itchy and flaky. Simple ways to keep it comfortable through December and January."
-image: "/img/kit-garden-1200.webp"
+image: "/img/cover-winter-dry-scalp-tips-1200.webp"
 question: "How do I stop a dry, itchy scalp in winter?"
+image_alt: "Young Pakistani man in a wool cap holding chai on a snowy morning in Murree"
 category: "Scalp Care"
 status: published
 ---

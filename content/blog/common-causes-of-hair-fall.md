@@ -2,8 +2,9 @@
 title: "Common causes of hair fall (and when to see a doctor)"
 date: "2026-10-13T10:00:00+05:00"
 description: "Stress, diet, hormones, genetics and styling habits: the common reasons people in Pakistan notice hair fall, and the signs that need a doctor."
-image: "/img/serum-duo-1200.webp"
+image: "/img/cover-common-causes-of-hair-fall-1200.webp"
 question: "What causes hair fall in men and women?"
+image_alt: "Pakistani couple concerned about hair fall, one holding a hairbrush"
 category: "Hair Fall"
 status: published
 ---

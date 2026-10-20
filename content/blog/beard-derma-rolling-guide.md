@@ -2,8 +2,9 @@
 title: "Derma rolling for a fuller-looking beard: what to know"
 date: "2026-10-11T10:00:00+05:00"
 description: "Patchy beard? How a beard derma roller routine works, hygiene after shaving, and realistic expectations for men in Pakistan."
-image: "/img/derma-roller-1200.webp"
+image: "/img/cover-beard-derma-rolling-guide-1200.webp"
 question: "Can you use a derma roller on your beard?"
+image_alt: "Pakistani man with a short patchy beard looking in a mirror"
 category: "Beard Care"
 status: published
 ---
