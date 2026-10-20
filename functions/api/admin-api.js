@@ -108,7 +108,7 @@ export async function onRequest({ request: req, env }) {
       if (!subject || text.length < 10) return json({ error: "Subject and message are required" }, 400);
       const keys = []; let cursor; do { const r = await env.STORE.list({ prefix: "sub:", cursor }); keys.push(...r.keys.map((k) => k.name)); cursor = r.list_complete ? null : r.cursor; } while (cursor);
       const subs = (await Promise.all(keys.slice(0, 900).map((k) => kvGet(env, k)))).filter((x) => x && !x.unsubscribed);
-      if (body.test) { const to = env.ADMIN_NOTIFY_EMAIL; if (!to) return json({ error: "Set ADMIN_NOTIFY_EMAIL to send a test" }, 400); return json(await sendBatch(env, req, [{ to, unsub: await unsubUrl(env, req, to) }], subject, text)); }
+      if (body.test) { const to = (env.ADMIN_NOTIFY_EMAIL || "care@envoquee.com"); if (!to) return json({ error: "Set ADMIN_NOTIFY_EMAIL to send a test" }, 400); return json(await sendBatch(env, req, [{ to, unsub: await unsubUrl(env, req, to) }], subject, text)); }
       const list = []; for (const x of subs) list.push({ to: x.email, unsub: await unsubUrl(env, req, x.email) });
       return json({ recipients: list.length, ...(await sendBatch(env, req, list, subject, text)) }); }
     if (a === "delete-order") { const id = String(body.id || ""); if (!OID.test(id)) return json({ error: "Bad id" }, 400); await kvDel(env, `order:${id}`); return json({ ok: true }); }

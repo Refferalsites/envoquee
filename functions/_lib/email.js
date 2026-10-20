@@ -42,7 +42,7 @@ async function deliver(env, msgs) {
   try {
     if (p === "resend") {
       const r = await fetch("https://api.resend.com/emails/batch", { method: "POST", headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-        body: JSON.stringify(msgs.map((m) => ({ from, to: [m.to], subject: m.subject, html: m.html, text: m.text, reply_to: env.EMAIL_REPLY_TO || undefined, headers: m.headers }))) });
+        body: JSON.stringify(msgs.map((m) => ({ from, to: [m.to], subject: m.subject, html: m.html, text: m.text, reply_to: env.EMAIL_REPLY_TO || "care@envoquee.com", headers: m.headers }))) });
       return { ok: r.ok, status: r.ok ? "sent" : "failed", detail: (await r.text()).slice(0, 200) };
     }
     const fm = from.match(/^(.*)<(.+)>$/), sender = fm ? { name: fm[1].trim(), email: fm[2].trim() } : { email: from };

@@ -119,3 +119,6 @@ table.spec{width:100%;border-collapse:collapse}.spec th,.spec td{text-align:left
 .ing h3{font-size:1.05rem;margin:12px 14px 4px}.ing p{font-size:.92rem;margin:0 14px 14px;line-height:1.5}
 .safety{border-left:4px solid #c0582f;padding:4px 0 4px 18px;margin-top:22px}
 .cust{margin:0;text-align:center}.cust img{width:100%;max-width:380px;height:auto;border-radius:50%}.cust figcaption{font-size:.85rem;opacity:.8;margin-top:8px}
+
+.wa-float{position:fixed;right:18px;bottom:22px;z-index:60;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.28)}.wa-float:hover{background:#1ebe5b}.wa-float:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media(max-width:899px){.wa-float{bottom:calc(92px + env(safe-area-inset-bottom));right:14px;width:54px;height:54px}}

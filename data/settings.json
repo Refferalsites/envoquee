@@ -2,13 +2,23 @@
  "site_name": "Envoquee",
  "tagline": "Scalp & hair care ritual",
  "announcement": "Cash on Delivery all over Pakistan · Launch price Rs 5,450 (was Rs 8,500)",
- "contact_email": "",
- "contact_phone": "",
- "whatsapp": "",
+ "contact_email": "care@envoquee.com",
+ "contact_phone": "+92 340 2690927",
+ "whatsapp": "+92 340 2690927",
  "address": "",
  "hours": "",
- "social": {"instagram": "", "facebook": "", "tiktok": "", "youtube": ""},
- "shipping": {"delivery_time": "", "delivery_charge": "", "free_delivery_over": "", "notes": ""},
+ "social": {
+  "instagram": "",
+  "facebook": "",
+  "tiktok": "",
+  "youtube": ""
+ },
+ "shipping": {
+  "delivery_time": "",
+  "delivery_charge": "",
+  "free_delivery_over": "",
+  "notes": ""
+ },
  "returns_policy": "",
  "seo": {
   "google_site_verification": "nSsuV9mH3cd2ZgG4h3WeBJiUXMKZXzm78653s9Qgg9w",

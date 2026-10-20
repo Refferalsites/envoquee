@@ -36,7 +36,7 @@ export async function onRequestPost({ request: req, env, waitUntil }) {
   const site = siteUrl(env, req), v = orderVars(order, site);
   const bg = (async () => {
     if (email) { await kvDel(env, `draft:${email}`); await sendTemplate(env, req, "order_customer", email, v); }
-    if (env.ADMIN_NOTIFY_EMAIL) await sendTemplate(env, req, "order_admin", env.ADMIN_NOTIFY_EMAIL, v);
+    if ((env.ADMIN_NOTIFY_EMAIL || "care@envoquee.com")) await sendTemplate(env, req, "order_admin", (env.ADMIN_NOTIFY_EMAIL || "care@envoquee.com"), v);
     await notifyHooks(env, "order.created", { order });
   })();
   if (waitUntil) waitUntil(bg); else await bg;

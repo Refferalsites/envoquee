@@ -34,7 +34,7 @@ export async function onRequestPost({ request: req, env, waitUntil }) {
   const idx = await kvGet(env, "msg:index", []); idx.unshift(id); await kvPut(env, "msg:index", idx.slice(0, 2000));
   await run((async () => {
     if (data.email) await sendTemplate(env, req, "contact_autoreply", data.email, data);
-    if (env.ADMIN_NOTIFY_EMAIL) await sendTemplate(env, req, "contact_admin", env.ADMIN_NOTIFY_EMAIL, data);
+    if ((env.ADMIN_NOTIFY_EMAIL || "care@envoquee.com")) await sendTemplate(env, req, "contact_admin", (env.ADMIN_NOTIFY_EMAIL || "care@envoquee.com"), data);
   })());
   return back(req, "/contact/thanks/");
 }
